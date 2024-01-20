@@ -7,32 +7,63 @@ import json
 from pprint import pprint
 import datetime
 import requests
+import google.generativeai as genai
+import json
+
 
 travel_api_router=APIRouter()
 
 openai.api_key = "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"
 api_key_maps = "AIzaSyDMWSgHTmFD9UdPTYIvLkXww_eyRdI5ggA"
 api_key = "AIzaSyDMWSgHTmFD9UdPTYIvLkXww_eyRdI5ggA"
+GEMINI_API = "AIzaSyCtQ914aymvoEhR07yzd9wB0EnkGBCK8JY"
 gmaps = googlemaps.Client(key=api_key_maps)
 
-def get_chatgpt_response(place, start_time, end_time, distance):
-    messages = [{"role": "system", "content": "You are a intelligent assistant."}]
-    template = f"i am in {place} and I am free from {start_time} to {end_time}. Please create an itinerary within a {distance} travel radius not more than it, with accurate place name ,activities and travel details and by considering breakfast,lunch,dinner with appropriate restaurant names if needed according to the time, considering the buffer time of 20min.Prioritize locations based on the shortest distance first. I want the itinerary to only travel on the road by car, no airways, no train included. Provide the output in JSON format with fields: Time, Location, Activity, Travel Time, Spend Time and Distance (in the specified order only).Give me only the itinerary, no other explanation or suggestion or sorry message or any alternatives. "
-    if template:
-        messages.append(
-            {"role": "user", "content": template},
-        )
-        chat = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=messages, n=3)
+def get_gemini_response(place, start_time, end_time, distance):
+    genai.configure(api_key=GEMINI_API)
+    model = genai.GenerativeModel('gemini-pro')
 
-    reply = chat.choices[0].message.content
-    print(reply)
-    output = reply.split("```")[0]
-    output = output.replace("\\n", "", 100)
-    output = output.replace("json", "")
-    output = output.replace("\\", "")
-    output = output.lower()
+    template = f"""i am in {place} and I am free from {start_time} to {end_time}. 
+    Please create an itinerary within a {distance} travel radius not more than it, 
+    with accurate place name ,activities and travel details and by considering 
+    breakfast,lunch,dinner with appropriate restaurant names if needed according to 
+    the time, considering the buffer time of 20min.Prioritize locations based on the 
+    shortest distance first. I want the itinerary to only travel on the road by car, 
+    no airways, no train included. Provide the output in JSON format with fields: Time, 
+    Location, Activity, Travel Time, Spend Time and Distance (in the specified order only).
+    Give me only the itinerary, no other explanation or suggestion or sorry message or
+    any alternatives. """
 
-    return output
+    response = model.generate_content(template).text
+
+    response = response.split("```")[1]
+    response = response.replace("\\n","")
+    response = response.replace("json","")
+    response = response.replace("\\","")
+    response = response.lower()
+
+    return(response)
+
+
+
+# def get_chatgpt_response(place, start_time, end_time, distance):
+#     messages = [{"role": "system", "content": "You are an intelligent assistant."}]
+#     template = f"i am in {place} and I am free from {start_time} to {end_time}. Please create an itinerary within a {distance} travel radius not more than it, with accurate place name ,activities and travel details and by considering breakfast,lunch,dinner with appropriate restaurant names if needed according to the time, considering the buffer time of 20min.Prioritize locations based on the shortest distance first. I want the itinerary to only travel on the road by car, no airways, no train included. Provide the output in JSON format with fields: Time, Location, Activity, Travel Time, Spend Time and Distance (in the specified order only).Give me only the itinerary, no other explanation or suggestion or sorry message or any alternatives. "
+#     if template:
+#         messages.append(
+#             {"role": "user", "content": template},
+#         )
+#         chat = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=messages, n=3)
+
+#     reply = chat.choices[0].message.content
+#     print(reply)
+#     output = reply.split("```")[0]
+#     output = output.replace("\\n", "", 100)
+#     output = output.replace("json", "")
+#     output = output.replace("\\", "")
+#     output = output.lower()
+
+#     return output
 
 
 def get_coordinates_from_place_id(api_key, place_id):
@@ -72,7 +103,7 @@ def is_place_open(place_id, api_key):
             "open_time": time_open,
             "close_time": time_close,
         }
-    else:
+    else:                                                                 
         # opeimg hours data is available so loop through each day in to find current days open and close timings
         for period in data["result"]["opening_hours"]["periods"]:
             day = period["open"]["day"]
@@ -141,7 +172,7 @@ def with_itinerary(json_res):
 
 
 def get_itinerary_plan(place, start_time, end_time, distance):
-    output = get_chatgpt_response(
+    output = get_gemini_response(
         place=place, start_time=start_time, end_time=end_time, distance=distance
     )
 
@@ -172,7 +203,8 @@ def get_itinerary_plan(place, start_time, end_time, distance):
 async def getdetails(obj: Getmodel):
     # Call the mltravel function to get the JSON data
     data = get_itinerary_plan(obj.place,obj.start_time,obj.end_time,obj.distance)
-   
+    
+    print(data)
     # Calculate the count of the plan
     plan_count = len(data['plan'])
 
