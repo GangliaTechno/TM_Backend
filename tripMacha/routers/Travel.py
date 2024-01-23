@@ -19,6 +19,15 @@ api_key = "AIzaSyDMWSgHTmFD9UdPTYIvLkXww_eyRdI5ggA"
 GEMINI_API = "AIzaSyCtQ914aymvoEhR07yzd9wB0EnkGBCK8JY"
 gmaps = googlemaps.Client(key=api_key_maps)
 
+def textify(text):
+    text = text.split("```")[1]
+    text = text.replace("\\n","")
+    text = text.replace("json","")
+    text = text.replace("\\","")
+    text = text.lower()
+    return text
+
+
 def get_gemini_response(place, start_time, end_time, distance):
     genai.configure(api_key=GEMINI_API)
     model = genai.GenerativeModel('gemini-pro')
@@ -34,13 +43,7 @@ def get_gemini_response(place, start_time, end_time, distance):
     Give me only the itinerary, no other explanation or suggestion or sorry message or
     any alternatives. """
 
-    response = model.generate_content(template).text
-
-    response = response.split("```")[1]
-    response = response.replace("\\n","")
-    response = response.replace("json","")
-    response = response.replace("\\","")
-    response = response.lower()
+    response = textify(model.generate_content(template).text)
 
     return(response)
 
@@ -202,19 +205,34 @@ def get_itinerary_plan(place, start_time, end_time, distance):
 @travel_api_router.post("/mltravel")
 async def getdetails(obj: Getmodel):
     # Call the mltravel function to get the JSON data
-    data = get_itinerary_plan(obj.place,obj.start_time,obj.end_time,obj.distance)
-    
-    print(data)
+    data1 = get_itinerary_plan(obj.place,obj.start_time,obj.end_time,obj.distance)
+    data2 = get_itinerary_plan(obj.place,obj.start_time,obj.end_time,obj.distance)
+    data3 = get_itinerary_plan(obj.place,obj.start_time,obj.end_time,obj.distance)
+
+    plan_dict = {
+        "plan_1" : [data1],
+        "plan_2" : [data2],
+        "plan_3" : [data3] 
+    }
+
+    # for i,v in plan_dict.items():
+    #     print(i, v)
+    #     print("\n")
+
     # Calculate the count of the plan
-    plan_count = len(data['plan'])
+    plan_count1 = len(plan_dict['plan_1'][0]["plan"])
+    plan_count2 = len(plan_dict['plan_2'][0]["plan"])
+    plan_count3 = len(plan_dict['plan_3'][0]["plan"])
 
     # Append the plan count to the JSON data
-    data['plan_count'] = plan_count
+    plan_dict['plan_1'][0]["plan_count"] = plan_count1
+    plan_dict['plan_2'][0]["plan_count"] = plan_count2
+    plan_dict['plan_3'][0]["plan_count"] = plan_count3
 
-    # Convert the data back to JSON string
-    json_data = json.dumps(data)
+    # # Convert the data back to JSON string
+    # json_data = json.dumps(data)
 
-    pprint(json_data)
+    pprint(plan_dict)
 
     # Return the JSON response
-    return json_data
+    return plan_dict
