@@ -205,34 +205,16 @@ def get_itinerary_plan(place, start_time, end_time, distance):
 @travel_api_router.post("/mltravel")
 async def getdetails(obj: Getmodel):
     # Call the mltravel function to get the JSON data
-    data1 = get_itinerary_plan(obj.place,obj.start_time,obj.end_time,obj.distance)
-    data2 = get_itinerary_plan(obj.place,obj.start_time,obj.end_time,obj.distance)
-    data3 = get_itinerary_plan(obj.place,obj.start_time,obj.end_time,obj.distance)
-
-    plan_dict = {
-        "plan_1" : [data1],
-        "plan_2" : [data2],
-        "plan_3" : [data3] 
-    }
+    data = get_itinerary_plan(obj.place,obj.start_time,obj.end_time,obj.distance)
 
     # for i,v in plan_dict.items():
     #     print(i, v)
     #     print("\n")
 
-    # Calculate the count of the plan
-    plan_count1 = len(plan_dict['plan_1'][0]["plan"])
-    plan_count2 = len(plan_dict['plan_2'][0]["plan"])
-    plan_count3 = len(plan_dict['plan_3'][0]["plan"])
-
-    # Append the plan count to the JSON data
-    plan_dict['plan_1'][0]["plan_count"] = plan_count1
-    plan_dict['plan_2'][0]["plan_count"] = plan_count2
-    plan_dict['plan_3'][0]["plan_count"] = plan_count3
-
     # # Convert the data back to JSON string
-    # json_data = json.dumps(data)
+    json_data = json.dumps(data)
 
-    pprint(plan_dict)
+    pprint(json_data)
 
     # Return the JSON response
-    return plan_dict
+    return json_data
