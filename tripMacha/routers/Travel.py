@@ -20,11 +20,13 @@ GEMINI_API = "AIzaSyCtQ914aymvoEhR07yzd9wB0EnkGBCK8JY"
 gmaps = googlemaps.Client(key=api_key_maps)
 
 def textify(text):
-    text = text.split("```")[1]
+    n=1
+    text = text.split("```")[n]
     text = text.replace("\\n","")
     text = text.replace("json","")
     text = text.replace("\\","")
     text = text.lower()
+    n=n+1
     return text
 
 
@@ -43,9 +45,16 @@ def get_gemini_response(place, start_time, end_time, distance):
     Give me only the itinerary, no other explanation or suggestion or sorry message or
     any alternatives. """
 
-    response = textify(model.generate_content(template).text)
+    text = model.generate_content(template).text
+    text = text.split("```")[1]
+    text = text.replace("\\n","")
+    text = text.replace("json","")
+    text = text.replace("\\","")
+    text = text.lower()
+    #n=n+1
+    return text
 
-    return(response)
+
 
 
 
@@ -210,6 +219,12 @@ async def getdetails(obj: Getmodel):
     # for i,v in plan_dict.items():
     #     print(i, v)
     #     print("\n")
+ # Calculate the count of the plan
+    plan_count = len(data['plan'])
+
+    # Append the plan count to the JSON data
+    data['plan_count'] = plan_count
+
 
     # # Convert the data back to JSON string
     json_data = json.dumps(data)
@@ -218,3 +233,4 @@ async def getdetails(obj: Getmodel):
 
     # Return the JSON response
     return json_data
+
