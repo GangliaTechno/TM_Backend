@@ -58,9 +58,9 @@ class UnsaveModel(BaseModel):
         arbitrary_types_allowed = True
 
 class FeedbackCollection(BaseModel):
+    name: str
     email:str
-    phone:int
-    name:str
+    subject:str
     messageContent:str
 
 
