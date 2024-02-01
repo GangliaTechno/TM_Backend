@@ -14,17 +14,19 @@ def encode_object_id(obj):
     raise TypeError(f"Object of type {obj.__class__.__name__} is not JSON serializable")
 # Add the custom encoder to pydantic's ENCODERS_BY_TYPE dictionary
 pydantic.v1.json.ENCODERS_BY_TYPE[ObjectId] = encode_object_id
-@feedback_api_router.post("/feedback")
-def createFeedback(feedback: FeedbackCollection):
-    data = feedback
-    new_feedback = {
-        "name" : data.name,
-        "email" : data.email,
-        "subject" : data.subject,
-        "messageContent" : data.messageContent
-    }
 
-    ins_feedback = feedback_collection.insert_one(new_feedback).inserted_id
-    return {"message": "inserted feedback", "feedback_id": str(ins_feedback)}  # Convert the ObjectId to str before returning
+# Uncomment to enable feedbacks saving to mongoDB but will work if getforms is removed from the ConstactUs.jsx
+# @feedback_api_router.post("/feedback")
+# def createFeedback(feedback: FeedbackCollection):
+#     data = feedback
+#     new_feedback = {
+#         "name" : data.name,
+#         "email" : data.email,
+#         "subject" : data.subject,
+#         "messageContent" : data.messageContent
+#     }
+
+#     ins_feedback = feedback_collection.insert_one(new_feedback).inserted_id
+#     return {"message": "inserted feedback", "feedback_id": str(ins_feedback)}  # Convert the ObjectId to str before returning
 
  
