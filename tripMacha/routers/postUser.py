@@ -2,9 +2,9 @@ from fastapi import APIRouter
 from models.SaveModel import UserCollection
 from config.database import user_collection
 from bson import ObjectId
-import pydantic.v1
+import pydantic
 #rom schema.user_schema import plans_serializer
-pydantic.v1.json.ENCODERS_BY_TYPE[ObjectId]=str
+pydantic.json.ENCODERS_BY_TYPE[ObjectId]=str
 user_api_router=APIRouter()
 @user_api_router.post("/user_collection") 
 def createUserCollection(user: UserCollection):
