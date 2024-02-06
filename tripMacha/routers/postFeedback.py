@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from config.database import feedback_collection
 from models.SaveModel import FeedbackCollection
 from bson import ObjectId
-import pydantic.v1
+import pydantic
 from pprint import pprint
 
 feedback_api_router=APIRouter()
@@ -13,7 +13,7 @@ def encode_object_id(obj):
         return str(obj)
     raise TypeError(f"Object of type {obj.__class__.__name__} is not JSON serializable")
 # Add the custom encoder to pydantic's ENCODERS_BY_TYPE dictionary
-pydantic.v1.json.ENCODERS_BY_TYPE[ObjectId] = encode_object_id
+pydantic.json.ENCODERS_BY_TYPE[ObjectId] = encode_object_id
 
 # Uncomment to enable feedbacks saving to mongoDB but will work if getforms is removed from the ConstactUs.jsx
 # @feedback_api_router.post("/feedback")
