@@ -3,7 +3,7 @@ from fastapi import APIRouter
 from models.SaveModel import PlanCollection,SaveModel
 from config.database import plan_collection,user_collection
 from bson import ObjectId
-import pydantic
+import pydantic 
 
 plan_api_router=APIRouter()
 #checking if user present and appending trip plan in history
