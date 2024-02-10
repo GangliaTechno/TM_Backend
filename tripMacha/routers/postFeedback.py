@@ -4,7 +4,7 @@ from config.database import feedback_collection
 from models.SaveModel import FeedbackCollection
 from fastapi.middleware.cors import CORSMiddleware
 from bson import ObjectId
-import pydantic.v1 as pydantic
+import pydantic
 import smtplib
 import ssl
 from email.message import EmailMessage

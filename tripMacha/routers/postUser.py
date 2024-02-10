@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from models.SaveModel import UserCollection
 from config.database import user_collection
 from bson import ObjectId
-import pydantic.v1 as pydantic
+import pydantic
 #rom schema.user_schema import plans_serializer
 pydantic.json.ENCODERS_BY_TYPE[ObjectId]=str
 user_api_router=APIRouter()
