@@ -46,7 +46,7 @@ def createFeedback(feedback: FeedbackCollection, background_tasks: BackgroundTas
 
     message = f"Name : {new_feedback['name']} ({new_feedback['email']}) \n Subject: {new_feedback['subject']} \n Message: {new_feedback['messageContent']}"
     
-    def send_mail(host = "smtp.gmail.com", port = 587, subject = new_feedback['subject'], msg = new_feedback['messageContent'], sender = SENDER_EMAIL, recipients = RECEIVER_EMAIL):
+    def send_mail(host = "smtp.gmail.com", port = 587, subject = new_feedback['subject'], msg = message, sender = SENDER_EMAIL, recipients = RECEIVER_EMAIL):
         try:
             em = EmailMessage()
             em['From'] = SENDER_EMAIL
