@@ -16,7 +16,7 @@ travel_api_router=APIRouter()
 openai.api_key = "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"
 api_key_maps = "AIzaSyDMWSgHTmFD9UdPTYIvLkXww_eyRdI5ggA"
 api_key = "AIzaSyDMWSgHTmFD9UdPTYIvLkXww_eyRdI5ggA"
-GEMINI_API = "AIzaSyCtQ914aymvoEhR07yzd9wB0EnkGBCK8JY"
+GEMINI_API = "AIzaSyASvGpXqgTW-lT116BYXDIfKoYd-QrFlwM"
 gmaps = googlemaps.Client(key=api_key_maps)
 
 def textify(text):
